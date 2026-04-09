@@ -24,6 +24,7 @@ API_KEY      = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 client = OpenAI(
     api_key=API_KEY,
     base_url=API_BASE_URL,
+    timeout=30.0,
 )
 
 # ---------------------------------------------------------------------------
@@ -313,5 +314,37 @@ def run_episode(task_name: str) -> float:
 # MAIN
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
+    import time
+    import requests
+
+    # --- RETRY LOGIC FOR PHASE 2 VALIDATOR ---
+    # The validator starts the server and inference script simultaneously.
+    # We must wait for the server (port 7860) to be ready.
+    server_url = "http://0.0.0.0:7860/"
+    max_retries = 12  # 12 * 5s = 60 seconds (matches the validator timeout)
+    server_ready = False
+
+    print(f"[DEBUG] Waiting for server at {server_url}...", flush=True)
+    
+    for i in range(max_retries):
+        try:
+            # We ping the healthcheck route we defined in app.py
+            response = requests.get(server_url, timeout=2)
+            if response.status_code == 200:
+                print(f"[DEBUG] Server is UP and responding!", flush=True)
+                server_ready = True
+                break
+        except requests.exceptions.ConnectionError:
+            print(f"[DEBUG] Server not ready (attempt {i+1}/{max_retries})...", flush=True)
+            time.sleep(5)
+    
+    if not server_ready:
+        print("[ERROR] Server failed to start within 60 seconds. Exiting.", flush=True)
+        sys.exit(1)
+
+    # --- RUN TASKS ---
     for task in ["easy", "medium", "hard"]:
-        run_episode(task)
+        try:
+            run_episode(task)
+        except Exception as e:
+            print(f"[ERROR] Episode {task} failed: {e}", flush=True)
