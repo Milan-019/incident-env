@@ -30,7 +30,7 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app/env
 
 # ---- Expose port -------------------------------------------
-EXPOSE 8000
+EXPOSE 7860
 
 # ---- Healthcheck -------------------------------------------
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
