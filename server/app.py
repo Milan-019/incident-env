@@ -47,14 +47,17 @@ async def healthcheck():
     )
 
 
-def main(host: str = "0.0.0.0", port: int = 7860):
+def main():
     import uvicorn
-    uvicorn.run(app, host=host, port=port)
-
-
-if __name__ == "__main__":
     import argparse
+    
     parser = argparse.ArgumentParser()
+    # We define the host and port inside main so the validator can "see" them
+    parser.add_argument("--host", type=str, default="0.0.0.0")
     parser.add_argument("--port", type=int, default=7860)
     args = parser.parse_args()
-    main(port=args.port)
+    
+    uvicorn.run(app, host=args.host, port=args.port)
+
+if __name__ == "__main__":
+    main()
