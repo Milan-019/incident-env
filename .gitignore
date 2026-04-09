@@ -1,0 +1,9 @@
+﻿
+.venv/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+openenv_my_env.egg-info/
+uv.lock
+

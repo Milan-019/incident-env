@@ -1,0 +1,45 @@
+spec_version: 1
+name: incident-env
+type: space
+runtime: fastapi
+app: server.app:app
+port: 8000
+
+metadata:
+  title: IncidentEnv — On-Call Incident Triage Environment
+  description: >
+    An RL evaluation environment where AI agents act as on-call engineers.
+    Given a production incident alert, logs, and deploy history, the agent
+    must investigate, identify root cause, and resolve the incident.
+  tags:
+    - openenv
+    - incident-response
+    - site-reliability-engineering
+    - code
+    - real-world
+
+tasks:
+  - name: easy
+    description: Single service down — DB pool exhaustion after recent deploy
+    difficulty: easy
+    max_steps: 8
+
+  - name: medium
+    description: Two services degraded — bad config env variable, misleading logs
+    difficulty: medium
+    max_steps: 10
+
+  - name: hard
+    description: >
+      Cascading 3-service failure — recent deploy is a red herring,
+      root cause is an old config change. Requires deep investigation.
+    difficulty: hard
+    max_steps: 14
+
+reward:
+  min: 0.0
+  max: 1.0
+  shaped: true
+  description: >
+    Partial credit at every step. Rewards investigation, diagnosis,
+    and correct resolution. Penalizes destructive or premature actions.
