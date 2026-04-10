@@ -297,7 +297,7 @@ def run_episode(task_name: str) -> float:
             break
 
     # ---- Final score --------------------------------------------------------
-    score   = max(0.0, min(1.0, score))
+    score   = max(0.0, min(0.99, score))
     success = bool(obs.resolved)
 
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
